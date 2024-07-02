@@ -2,6 +2,8 @@ import cv2
 import mediapipe as mp
 import os
 import webbrowser
+from time import sleep
+from pynput.keyboard import Controller, Key
 
 BRANCO = (255, 255, 255)
 PRETO = (0, 0, 0)
@@ -27,6 +29,9 @@ teclas = [['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
             ['A','S','D','F','G','H','J','K','L'],
             ['Z','X','C','V','B','N','M', ',','.',' ']]
 offset = 50
+contador = 0
+texto = '>'
+teclado = Controller()
 
 def encontra_coordenada_maos(img, lado_invertido = False):
     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -96,7 +101,31 @@ while True:
                     if sum(info_dedos_mao1) <= 1:
                         letra = letra.lower()
                     img = imprime_botoes(img, (offset + indice * 80, offset + indice_linha * 80  ), letra)
-                    
+                    if offset + indice * 80  < indicador_x < 100 + indice * 80 and offset + indice_linha * 80 <indicador_y < 100 + indice_linha * 80:
+                        img = imprime_botoes(img, (offset + indice * 80, offset + indice_linha * 80  ), letra, cor_retangulo = VERDE)
+                        if indicador_z < -85:
+                            contador = 1
+                            escreve = letra
+                            img = imprime_botoes(img, (offset + indice * 80, offset + indice_linha * 80  ), letra, cor_retangulo = AZUL_CLARO)    
+            if contador:
+                contador += 1
+                if contador == 3:
+                    texto += escreve
+                    contador = 0
+                    teclado.press(escreve)
+            
+            if info_dedos_mao1 == [ False, False, False, False, True] and len(texto) > 1:
+                texto = texto[:-1]
+                teclado.press(Key.backspace)
+                sleep(0.15)
+            
+
+            
+            cv2.rectangle(img, (offset, 450), (830, 500), BRANCO, cv2.FILLED)
+            cv2.rectangle(img, (offset, 450), (830, 500), AZUL, 1)
+            cv2.putText(img, texto[-40:], (offset, 480), cv2.FONT_HERSHEY_COMPLEX, 1, PRETO, 2)
+            cv2.circle(img, (indicador_x, indicador_y), 7, AZUL, cv2.FILLED)
+
         if todas_maos[0]['lado'] == 'Right':
             if info_dedos_mao1 == [False, True, False, False, False] and bloco_notas == False:
                 bloco_notas = True
@@ -110,12 +139,15 @@ while True:
             # if info_dedos_mao1 == [False, False, False, False, False] and chrome == True:
             #     chrome = False
             #     os.system('TASKKILL /IM chrome.exe')
-            if info_dedos_mao1 == [True, True, False, False, True]:
-                break
+            # if info_dedos_mao1 == [True, True, False, False, True]:
+            #     break
         
 
     cv2.imshow('imagem', img)
     tecla = cv2.waitKey(1)
     if tecla == 27:
         break   
+
+with open('texto.txt', 'w') as arquivo:
+    arquivo.write(texto) 
 
