@@ -8,8 +8,12 @@ mp_face_mesh = mp.solutions.face_mesh
 
 p_olho_esquerdo = [385, 380, 387, 373, 362, 263]
 p_olho_direito = [160, 144, 158, 153, 33, 133]
+# pupula_direito = [468, 469, 470, 471, 472]
+pupula_direito = [468]
+# pupula_esquerdo = [473, 474, 475, 476, 477]
+pupula_esquerdo = [473]
 
-p_olhos = p_olho_esquerdo + p_olho_direito
+p_olhos = p_olho_esquerdo + p_olho_direito + pupula_direito + pupula_esquerdo
 
 def calculo_ear(face, p_olho_dir, p_olho_esq):
     try:
