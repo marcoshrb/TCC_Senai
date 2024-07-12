@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 import pyautogui
-cam = cv2.VideoCapture(0)
+cam = cv2.VideoCapture(1)
 face_mesh = mp.solutions.face_mesh.FaceMesh(refine_landmarks = True)
 screen_w, screen_h = pyautogui.size()
 while True:
@@ -21,6 +21,7 @@ while True:
                 screen_x = screen_w / frame_w * x
                 screen_y = screen_h / frame_h * y
                 pyautogui.moveTo(screen_x, screen_y)
+                
         left = [landmarks[145], landmarks[159]]
         for landmark in left:
             x = int(landmark.x * frame_w)
