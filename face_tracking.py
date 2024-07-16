@@ -53,21 +53,20 @@ with mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence
 
         try:
             for face_landmarks in saida_facemesh.multi_face_landmarks:
+
                 for id_coord in [ponto_central_idx, ponto_esquerda_idx, ponto_direita_idx]:
                     coord_xyz = face_landmarks.landmark[id_coord]
                     coord_cv = mp_drawing._normalized_to_pixel_coordinates(coord_xyz.x, coord_xyz.y, largura, comprimento)
                     cv2.circle(frame, coord_cv, 2, (255, 0, 0), -1)
+                
+                ponto_central = face_landmarks.landmark[ponto_central_idx]
+                ponto_central_cv = mp_drawing._normalized_to_pixel_coordinates(ponto_central.x, ponto_central.y, largura, comprimento)
 
-                # for id, landmark in enumerate(face[474:478]):
-                #     # mudar aq para mover o mouse uma maneira melhor
+                screen_x = int(ponto_central_cv[0] * screen_w / largura)
+                screen_y = int(ponto_central_cv[1] * screen_h / comprimento)
 
-                #     x = int(landmark.x * largura)
-                #     y = int(landmark.y * comprimento)
-                #     if id == 0 :
-                #         screen_x = int(screen_w / largura * x)
-                #         screen_y = int(screen_h / comprimento * y)
-                #         screen_x = screen_w - screen_x
-                #         pyautogui.moveTo(screen_x, screen_y)
+                pyautogui.moveTo(screen_x, screen_y)
+
 
                 direcao = calculate_direction(face_landmarks, largura, comprimento)
                 frame = cv2.flip(frame, 1)
