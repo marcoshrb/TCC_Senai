@@ -30,12 +30,24 @@ def calculate_direction(face_landmarks, largura, comprimento):
     distancia_esquerda = math.sqrt((ponto_central_cv[0] - ponto_esquerda_cv[0])**2 + (ponto_central_cv[1] - ponto_esquerda_cv[1])**2)
     distancia_direita = math.sqrt((ponto_central_cv[0] - ponto_direita_cv[0])**2 + (ponto_central_cv[1] - ponto_direita_cv[1])**2)
 
+    print("distancia_direita: ", distancia_direita)
+    print("distancia_esquerda: ", distancia_esquerda)
+
     if distancia_esquerda > distancia_direita:
-        return "Direita"
+        direcao = "Direita"
+        # valor = (distancia_esquerda - distancia_direita) * (-1)
+        # valor = distancia_direita * (-1)
+        valor = distancia_esquerda * (-1)
     elif distancia_direita > distancia_esquerda:
-        return "Esquerda"
+        direcao = "Esquerda"
+        # valor = distancia_direita - distancia_esquerda
+        # valor = distancia_esquerda
+        valor = distancia_direita
     else:
-        return "Centro"
+        direcao = "Centro"
+        valor = 0
+
+    return direcao, valor
 
 with mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5, refine_landmarks=True) as facemesh:
     while cap.isOpened():
@@ -62,13 +74,15 @@ with mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence
                 ponto_central = face_landmarks.landmark[ponto_central_idx]
                 ponto_central_cv = mp_drawing._normalized_to_pixel_coordinates(ponto_central.x, ponto_central.y, largura, comprimento)
 
-                screen_x = int(ponto_central_cv[0] * screen_w / largura)
+                direcao, valor = calculate_direction(face_landmarks, largura, comprimento)
+
+                screen_x = int(ponto_central_cv[0] * screen_w / largura) * valor
                 screen_y = int(ponto_central_cv[1] * screen_h / comprimento)
+
+                screen_x = screen_w - screen_x
 
                 pyautogui.moveTo(screen_x, screen_y)
 
-
-                direcao = calculate_direction(face_landmarks, largura, comprimento)
                 frame = cv2.flip(frame, 1)
                 cv2.putText(frame, f"Direcao: {direcao}", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
