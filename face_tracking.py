@@ -17,6 +17,9 @@ cap = cv2.VideoCapture(0)
 cv2.namedWindow('Camera', cv2.WINDOW_NORMAL)
 cv2.setWindowProperty('Camera', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
+max_x = 0
+min_x = 0
+
 def calculate_direction(face_landmarks, largura, comprimento):
 
     ponto_central = face_landmarks.landmark[ponto_central_idx]
@@ -34,20 +37,17 @@ def calculate_direction(face_landmarks, largura, comprimento):
     print("distancia_esquerda: ", distancia_esquerda)
 
     if distancia_esquerda > distancia_direita:
-        direcao = "Direita"
         # valor = (distancia_esquerda - distancia_direita) * (-1)
         # valor = distancia_direita * (-1)
         valor = distancia_esquerda * (-1)
     elif distancia_direita > distancia_esquerda:
-        direcao = "Esquerda"
         # valor = distancia_direita - distancia_esquerda
         # valor = distancia_esquerda
         valor = distancia_direita
     else:
-        direcao = "Centro"
         valor = 0
 
-    return direcao, valor
+    return valor
 
 with mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5, refine_landmarks=True) as facemesh:
     while cap.isOpened():
@@ -55,40 +55,43 @@ with mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence
         successo, frame = cap.read()
 
         if not successo:
-            print("Ignorando o frame vazio da camêra.")
             continue
 
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         saida_facemesh = facemesh.process(frame)
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        comprimento, largura, _ = frame.shape
+        shape_y, shape_x, _ = frame.shape
 
         try:
             for face_landmarks in saida_facemesh.multi_face_landmarks:
-
-                for id_coord in [ponto_central_idx, ponto_esquerda_idx, ponto_direita_idx]:
-                    coord_xyz = face_landmarks.landmark[id_coord]
-                    coord_cv = mp_drawing._normalized_to_pixel_coordinates(coord_xyz.x, coord_xyz.y, largura, comprimento)
-                    cv2.circle(frame, coord_cv, 2, (255, 0, 0), -1)
+                
                 
                 ponto_central = face_landmarks.landmark[ponto_central_idx]
-                ponto_central_cv = mp_drawing._normalized_to_pixel_coordinates(ponto_central.x, ponto_central.y, largura, comprimento)
+                ponto_central_cv = mp_drawing._normalized_to_pixel_coordinates(ponto_central.x, ponto_central.y, shape_x, shape_y)
 
-                direcao, valor = calculate_direction(face_landmarks, largura, comprimento)
+                # valor = calculate_direction(face_landmarks, shape_x, shape_y)
 
-                screen_x = int(ponto_central_cv[0] * screen_w / largura) * valor
-                screen_y = int(ponto_central_cv[1] * screen_h / comprimento)
+                screen_x = int(ponto_central_cv[0] * screen_w / shape_x)
+                screen_y = int(ponto_central_cv[1] * screen_h / shape_y)
 
                 screen_x = screen_w - screen_x
 
+                # if screen_x > max_x:
+                max_x = screen_x
+                
+                cv2.circle(frame, (screen_x, screen_y), 2, (0, 0, 255), -1)    
+                
                 pyautogui.moveTo(screen_x, screen_y)
-
-                frame = cv2.flip(frame, 1)
-                cv2.putText(frame, f"Direcao: {direcao}", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-
         except:
             pass
         
+        centro_x = int(shape_x / 2)
+        centro_y = int(shape_y / 2)
+        cv2.circle(frame, (centro_x, centro_y), 2, (255, 0, 0), -1)
+        cv2.circle(frame, (shape_x - 3, centro_y), 2, (255, 0, 0), -1)
+        cv2.circle(frame, (5, centro_y), 2, (255, 0, 0), -1)
+
+        frame = cv2.flip(frame, 1)
         
         cv2.imshow('Camera', frame)
         if cv2.waitKey(10) & 0xFF == ord('c'):
