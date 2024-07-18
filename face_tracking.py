@@ -18,7 +18,7 @@ cv2.namedWindow('Camera', cv2.WINDOW_NORMAL)
 cv2.setWindowProperty('Camera', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
 max_x = 0
-min_x = 0
+min_x = 10000
 
 def calculate_direction(face_landmarks, largura, comprimento):
 
@@ -69,17 +69,18 @@ with mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence
                 ponto_central = face_landmarks.landmark[ponto_central_idx]
                 ponto_central_cv = mp_drawing._normalized_to_pixel_coordinates(ponto_central.x, ponto_central.y, shape_x, shape_y)
 
-                # valor = calculate_direction(face_landmarks, shape_x, shape_y)
+                valor = calculate_direction(face_landmarks, shape_x, shape_y)
 
                 screen_x = int(ponto_central_cv[0] * screen_w / shape_x)
                 screen_y = int(ponto_central_cv[1] * screen_h / shape_y)
 
                 screen_x = screen_w - screen_x
 
-                # if screen_x > max_x:
-                max_x = screen_x
-                
-                cv2.circle(frame, (screen_x, screen_y), 2, (0, 0, 255), -1)    
+                if screen_x > max_x:
+                    max_x = screen_x
+
+                if screen_x < min_x:
+                    min_x = screen_x
                 
                 pyautogui.moveTo(screen_x, screen_y)
         except:
@@ -93,6 +94,8 @@ with mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence
 
         frame = cv2.flip(frame, 1)
         
+        cv2.putText(frame, f"{max_x}", (30, 30), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 1)
+        cv2.putText(frame, f"{min_x}", (30, 60), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 1)
         cv2.imshow('Camera', frame)
         if cv2.waitKey(10) & 0xFF == ord('c'):
             break
