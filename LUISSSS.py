@@ -17,18 +17,20 @@ cap = cv2.VideoCapture(0)
 cv2.namedWindow('Camera', cv2.WINDOW_NORMAL)
 cv2.setWindowProperty('Camera', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
-
-def center(points):
-    length = len(points)
-    dimensions = len(points[0])
+def center(points):  # points = [(0.3677200675010681, 0.5302953720092773, 0.06319724768400192), (0.5749164819717407, 0.4928884208202362, 0.09656859189271927)]
+    length = len(points) # 2 (pontos direita, pontos esquerda)
+    dimensions = len(points[0]) # 3 (x,y,z)
     
-    center = [0] * dimensions
+    center = [0] * dimensions # [0, 0, 0]
 
-    for point in points:
-        for i in range(dimensions):
+    for point in points: # point = (0.5419098734855652, 0.4957171678543091, 0.09395650029182434)
+        for i in range(dimensions): # i = 0, 1, 2
             center[i] += point[i]
+            # 0 : 0.9677649438381195
+            # 1 : 0.8750548362731934
+            # 2 : 0.12433212250471115
 
-    return tuple([c / length for c in center])
+    return tuple([c / length for c in center]) #(0.451552078127861, 0.48562246561050415, 0.07658595591783524)
 
 def direction(a, b):
     dir = [a[i] - b[i] for i in range(len(a))]
@@ -71,28 +73,15 @@ with mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence
                 direcao = direction((ponto_central.x, ponto_central.y, ponto_central.z), centro_point)
                 direcao = direcao[:-1]
                 
-                print(direcao)
                 screen_x = rescale(direcao[0], (0.3, -0.3), (0, screen_w))
                 screen_y = rescale(direcao[1], (-0.4, 0), (0, screen_h))
 
                 pyautogui.moveTo(screen_x, screen_y)
 
-                # ponto_central_cv = mp_drawing._normalized_to_pixel_coordinates(ponto_central.x, ponto_central.y, shape_x, shape_y)
-
-                # screen_x = int(ponto_central_cv[0] * screen_w / shape_x)
-                # screen_y = int(ponto_central_cv[1] * screen_h / shape_y)
-
-                # screen_x = screen_w - screen_x
-                
-                # pyautogui.moveTo(screen_x, screen_y)
         except:
             pass
         
-        # centro_x = int(shape_x / 2)
-        # centro_y = int(shape_y / 2)
-        # cv2.circle(frame, (centro_x, centro_y), 2, (255, 0, 0), -1)
-        # cv2.circle(frame, (shape_x - 3, centro_y), 2, (255, 0, 0), -1)
-        # cv2.circle(frame, (5, centro_y), 2, (255, 0, 0), -1)
+
 
         frame = cv2.flip(frame, 1)
         
