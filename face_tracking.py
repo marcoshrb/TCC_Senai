@@ -26,7 +26,8 @@ stabiler_size = 5
 stabiler = [(0,0)] * stabiler_size
 
 ear_linear = 0.3
-mar_limiar = 0.1
+mar_limiar = 0.2
+click = False
 
 cap = cv2.VideoCapture(0)
 
@@ -83,9 +84,6 @@ def normalize(value, min, max):
 def rescale(value, originalscale, targetscale):
     return targetscale[0] + (normalize(value, originalscale[0], originalscale[1]) * (targetscale[1] - targetscale[0]))
 
-
-
-
 with mp_face_mesh.FaceMesh(max_num_faces=1, min_detection_confidence=0.5, min_tracking_confidence=0.5) as facemesh:
     while cap.isOpened():
 
@@ -118,14 +116,17 @@ with mp_face_mesh.FaceMesh(max_num_faces=1, min_detection_confidence=0.5, min_tr
             
             # ear_dir, ear_esq = calculo_ear(face_landmarks.landmark, p_olho_direito, p_olho_esquerdo)
             
-            
             mar = calculo_mar(face_landmarks.landmark, p_boca)
-                
+          
             # if (ear_dir < ear_linear and ear_esq >= ear_linear) or (ear_esq < ear_linear and ear_dir >= ear_linear):
             #     pyautogui.click()
             
-            if mar < mar_limiar:
+            if mar > mar_limiar:
+                click = True
+                
+            if mar <= mar_limiar and click:
                 pyautogui.click()
-        
+                click = False
+                
 cap.release()
 cv2.destroyAllWindows()
