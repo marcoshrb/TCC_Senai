@@ -15,6 +15,7 @@ ponto_esquerda_idx = 356
 ponto_direita_idx = 127
 p_olho_esquerdo = [385, 380, 387, 373, 362, 263]
 p_olho_direito = [160, 144, 158, 153, 33, 133]
+p_boca = [82, 87, 13, 14, 312, 317, 78, 308]
 p_olhos = p_olho_esquerdo + p_olho_direito
 
 ponto_central = 0
@@ -25,6 +26,7 @@ stabiler_size = 5
 stabiler = [(0,0)] * stabiler_size
 
 ear_linear = 0.3
+mar_limiar = 0.1
 
 cap = cv2.VideoCapture(0)
 
@@ -41,6 +43,17 @@ def calculo_ear(face, p_olho_dir, p_olho_esq):
         ear_dir = 0.0
         
     return ear_dir, ear_esq
+
+def calculo_mar(face, p_boca):
+    try:
+        face = np.array([[coord.x, coord.y] for coord in face])
+        face_boca = face[p_boca,:]
+
+        mar = (np.linalg.norm(face_boca[0]-face_boca[1])+np.linalg.norm(face_boca[2]-face_boca[3])+np.linalg.norm(face_boca[4]-face_boca[5]))/(2*(np.linalg.norm(face_boca[6]-face_boca[7])))
+    except:
+        mar = 0.0
+
+    return mar
 
 def center(points):
     length = len(points)
@@ -69,6 +82,8 @@ def normalize(value, min, max):
 
 def rescale(value, originalscale, targetscale):
     return targetscale[0] + (normalize(value, originalscale[0], originalscale[1]) * (targetscale[1] - targetscale[0]))
+
+
 
 
 with mp_face_mesh.FaceMesh(max_num_faces=1, min_detection_confidence=0.5, min_tracking_confidence=0.5) as facemesh:
@@ -101,9 +116,15 @@ with mp_face_mesh.FaceMesh(max_num_faces=1, min_detection_confidence=0.5, min_tr
 
             pyautogui.moveTo(avg_x, avg_y)
             
-            ear_dir, ear_esq = calculo_ear(face_landmarks.landmark, p_olho_direito, p_olho_esquerdo)
+            # ear_dir, ear_esq = calculo_ear(face_landmarks.landmark, p_olho_direito, p_olho_esquerdo)
             
-            if (ear_dir < ear_linear and ear_esq >= ear_linear) or (ear_esq < ear_linear and ear_dir >= ear_linear):
+            
+            mar = calculo_mar(face_landmarks.landmark, p_boca)
+                
+            # if (ear_dir < ear_linear and ear_esq >= ear_linear) or (ear_esq < ear_linear and ear_dir >= ear_linear):
+            #     pyautogui.click()
+            
+            if mar < mar_limiar:
                 pyautogui.click()
         
 cap.release()
