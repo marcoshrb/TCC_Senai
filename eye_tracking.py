@@ -1,6 +1,11 @@
 import cv2
 import mediapipe as mp
+import numpy as np
 import pyautogui
+
+from utils import center, direction, landmarkToTuple, rescale
+
+pyautogui.FAILSAFE = False
 
 mp_drawing = mp.solutions.drawing_utils
 mp_face_mesh = mp.solutions.face_mesh
@@ -12,11 +17,14 @@ cap = cv2.VideoCapture(0)
 face_idx = [356, 9, 127]
 
 left_eye_idx = [385, 380, 387, 373, 362, 263]
-rigth_eye_idx = [160, 144, 158, 153, 33, 133]
+right_eye_idx = [160, 144, 158, 153, 33, 133]
 
-pupila_direito = [468]
-pupila_esquerda = [473]
+left_pupil = 473
+right_pupil = 468
 ###################
+
+stabiler_size = 10
+stabiler = [(0,0)] * stabiler_size
 
 cv2.namedWindow('Camera', cv2.WINDOW_NORMAL)
 
@@ -28,29 +36,32 @@ with mp_face_mesh.FaceMesh(max_num_faces=1, min_detection_confidence=0.5, min_tr
             continue
         
         saida_facemesh = facemesh.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-        print("=================")
         
         if saida_facemesh.multi_face_landmarks:
-            shape_y, shape_x, _ = frame.shape
             face_landmarks = saida_facemesh.multi_face_landmarks[0]
             
-            for idx in face_idx:
-                point = face_landmarks.landmark[idx]
-                coord = mp_drawing._normalized_to_pixel_coordinates(point.x, point.y, shape_x, shape_y)
-                cv2.circle(frame, coord, 2, (255, 0, 0), -1)
-                print(f"{idx} = [{point.x}, {point.y}, {point.z}]")
-                
-            for idx in left_eye_idx + rigth_eye_idx:
-                point = face_landmarks.landmark[idx]
-                coord = mp_drawing._normalized_to_pixel_coordinates(point.x, point.y, shape_x, shape_y)
-                cv2.circle(frame, coord, 1, (0, 255, 0), -1)
-                print(f"{idx} = [{point.x}, {point.y}, {point.z}]")
-                
-            for idx in pupila_direito + pupila_esquerda:
-                point = face_landmarks.landmark[idx]
-                coord = mp_drawing._normalized_to_pixel_coordinates(point.x, point.y, shape_x, shape_y)
-                cv2.circle(frame, coord, 5, (0, 0, 255), 2)
-                print(f"{idx} = [{point.x}, {point.y}, {point.z}]")
+            left_eye = [landmarkToTuple(face_landmarks.landmark[idx]) for idx in left_eye_idx]
+            right_eye = [landmarkToTuple(face_landmarks.landmark[idx]) for idx in right_eye_idx]
+            
+            left_eye_center = center(left_eye)
+            right_eye_center = center(right_eye)
+            eyes_center = center([left_eye_center, right_eye_center])
+            
+            left_eye_direction = direction(landmarkToTuple(face_landmarks.landmark[left_pupil]), left_eye_center)
+            right_eye_direction = direction(landmarkToTuple(face_landmarks.landmark[right_pupil]), right_eye_center)
+            
+            vision_direction = center([left_eye_direction, right_eye_direction])
+            
+            screen_x = rescale(vision_direction[0], (0, -0.8), (0, screen_w))
+            screen_y = rescale(vision_direction[1], (-0.7, -0.47), (0, screen_h))
+            
+            stabiler.pop(0)
+            stabiler.append((screen_x, screen_y))
+
+            avg_x, avg_y = np.mean(stabiler, axis=0)
+            pyautogui.moveTo(avg_x, avg_y)
+            
+            print(vision_direction)
             
         cv2.imshow('Camera', frame)
         if cv2.waitKey(10) & 0xFF == 27:
