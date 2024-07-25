@@ -3,7 +3,7 @@ import mediapipe as mp
 import numpy as np
 import pyautogui
 
-from utils import center, direction, landmarkToTuple, rescale
+from utils import center, direction, distance, distanceTo, landmarkToTuple, rescale
 
 pyautogui.FAILSAFE = False
 
@@ -40,28 +40,32 @@ with mp_face_mesh.FaceMesh(max_num_faces=1, min_detection_confidence=0.5, min_tr
         if saida_facemesh.multi_face_landmarks:
             face_landmarks = saida_facemesh.multi_face_landmarks[0]
             
+            face_center = center([landmarkToTuple(face_landmarks.landmark[0]), landmarkToTuple(face_landmarks.landmark[2])])
+            face_direction = direction(face_center, landmarkToTuple(face_landmarks.landmark[1]))
+            
             left_eye = [landmarkToTuple(face_landmarks.landmark[idx]) for idx in left_eye_idx]
             right_eye = [landmarkToTuple(face_landmarks.landmark[idx]) for idx in right_eye_idx]
             
-            left_eye_center = center(left_eye)
-            right_eye_center = center(right_eye)
-            eyes_center = center([left_eye_center, right_eye_center])
+            left_eye_size = distance(left_eye[4], left_eye[5])
+            right_eye_size = distance(right_eye[4], right_eye[5])
+            
+            left_eye_center = distanceTo(center(left_eye), face_direction, left_eye_size / 2)
+            right_eye_center = distanceTo(center(right_eye), face_direction, right_eye_size / 2)
             
             left_eye_direction = direction(landmarkToTuple(face_landmarks.landmark[left_pupil]), left_eye_center)
             right_eye_direction = direction(landmarkToTuple(face_landmarks.landmark[right_pupil]), right_eye_center)
             
             vision_direction = center([left_eye_direction, right_eye_direction])
+            print(vision_direction)
             
-            screen_x = rescale(vision_direction[0], (0, -0.8), (0, screen_w))
-            screen_y = rescale(vision_direction[1], (-0.7, -0.47), (0, screen_h))
+            screen_x = rescale(vision_direction[0], (0.11, -0.27), (0, screen_w))
+            screen_y = rescale(vision_direction[1], (-0.9, -0.47), (0, screen_h))
             
             stabiler.pop(0)
             stabiler.append((screen_x, screen_y))
 
             avg_x, avg_y = np.mean(stabiler, axis=0)
             pyautogui.moveTo(avg_x, avg_y)
-            
-            print(vision_direction)
             
         cv2.imshow('Camera', frame)
         if cv2.waitKey(10) & 0xFF == 27:

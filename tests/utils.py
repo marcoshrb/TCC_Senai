@@ -39,3 +39,6 @@ def distance(a, b):
 
 def distanceTo(point, direction, distance):
     return tuple([point[i] + direction[i] * distance for i in range(len(point))])
+
+def landmarkToTuple(landmark):
+    return (landmark.x, landmark.y, landmark.z)

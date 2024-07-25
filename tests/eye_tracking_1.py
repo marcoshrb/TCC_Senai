@@ -37,13 +37,20 @@ draw_point(ax, right_pupil)
 
 vision_distance = 0.1
 
-left_eye_center = center(left_eye)
+head_center = center([face_left, face_right])
+head_direction = direction(head_center, face_center)
+
+left_eye_size = distance(left_eye[4], left_eye[5])
+
+left_eye_center = distanceTo(center(left_eye), head_direction, left_eye_size / 2)
 left_eye_direction = direction(left_pupil, left_eye_center)
 left_vision = distanceTo(left_pupil, left_eye_direction, vision_distance)
 draw_point(ax, left_eye_center, 'blue')
 draw_line(ax, left_pupil, left_vision, 'green')
 
-right_eye_center = center(right_eye)
+right_eye_size = distance(right_eye[4], right_eye[5])
+
+right_eye_center = distanceTo(center(right_eye), head_direction, right_eye_size / 2)
 right_eye_direction = direction(right_pupil, right_eye_center)
 right_vision = distanceTo(right_pupil, right_eye_direction, vision_distance)
 draw_point(ax, right_eye_center, 'blue')

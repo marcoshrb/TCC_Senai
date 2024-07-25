@@ -24,6 +24,9 @@ def distance(a, b):
     sumd = sum([(a[i] - b[i]) ** 2 for i in range(len(a))])
     return math.sqrt(sumd)
 
+def distanceTo(point, direction, distance):
+    return tuple([point[i] + direction[i] * distance for i in range(len(point))])
+
 def normalize(value, min, max):
     return (value - min) / (max - min)
 
