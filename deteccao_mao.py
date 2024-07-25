@@ -141,11 +141,6 @@ while True:
             if info_dedos_mao1 == [False, False, False, False, False] and bloco_notas == True:
                 bloco_notas = False
                 os.system('TASKKILL /IM notepad.exe')
-            # if info_dedos_mao1 == [False, False, False, False, False] and chrome == True:
-            #     chrome = False
-            #     os.system('TASKKILL /IM chrome.exe')
-            # if info_dedos_mao1 == [True, True, False, False, True]:
-            #     break
     
     if len(todas_maos) == 2:
         info_dedos_mao1 = dedos_levantados(todas_maos[0])
