@@ -120,15 +120,17 @@ def encontra_coordenada_maos(img, lado_invertido = False):
 def dedos_levantados(mao):
     dedos = []
     if mao['lado'] == 'Right': 
+        
         if mao['coordenadas'][4][0] < mao['coordenadas'][3][0]:
-            dedos.append(True)
-        else:
             dedos.append(False)
+        else:
+            dedos.append(True)
     else:
         if mao['coordenadas'][4][0] > mao['coordenadas'][3][0]:
-            dedos.append(True)
-        else:
             dedos.append(False)
+        else:
+            dedos.append(True)
+            
     for ponta_dedo in [8,12,16,20]:
         if mao['coordenadas'][ponta_dedo][1] < mao['coordenadas'][ponta_dedo-2][1]:
             dedos.append(True)
@@ -145,15 +147,19 @@ with mp_face_mesh.FaceMesh(max_num_faces=1, min_detection_confidence=0.5, min_tr
         
         # HANDS
         
-        frame, todas_maos = encontra_coordenada_maos(frame)
+        frame, todas_maos = encontra_coordenada_maos(frame, True)
         
         if todas_maos:
-            info_dedos_mao1 = dedos_levantados(todas_maos[0])
             if todas_maos[0]['lado'] == 'Right':
-        
-                if info_dedos_mao1 == [ False, True, False, False, False]:
-                    pyautogui.click()
-                    # teclado.press(Key.backspace)
+                info_dedos_mao1 = dedos_levantados(todas_maos[0])
+                
+                # if todas_maos[0]['coordenadas'][4][0] - todas_maos[0]['coordenadas'][8][0] < 1:c
+                print(todas_maos[0]['coordenadas'][4][0] - todas_maos[0]['coordenadas'][8][0])
+                    
+                # if info_dedos_mao1 == [ False, False, False, False, False]:
+                #     teclado.press(Key.backspace)
+                # if info_dedos_mao1 == [ True, True, False, False, False]:
+                #     pyautogui.click()
                
         
         # FACE
