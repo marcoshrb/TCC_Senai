@@ -35,6 +35,7 @@ with mp_face_mesh.FaceMesh(max_num_faces=1, min_detection_confidence=0.5, min_tr
         if not successo:
             continue
         
+        print("=========")
         saida_facemesh = facemesh.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         
         if saida_facemesh.multi_face_landmarks:
@@ -58,8 +59,19 @@ with mp_face_mesh.FaceMesh(max_num_faces=1, min_detection_confidence=0.5, min_tr
             vision_direction = center([left_eye_direction, right_eye_direction])
             print(vision_direction)
             
+            left_eye_top = center([left_eye[0], left_eye[2]])
+            left_eye_bottom = center([left_eye[1], left_eye[3]])
+            left_eye_angle = direction(left_eye_top, left_eye_bottom)
+            
+            right_eye_top = center([right_eye[0], right_eye[2]])
+            right_eye_bottom = center([right_eye[1], right_eye[3]])
+            right_eye_angle = direction(right_eye_top, right_eye_bottom)
+            
+            mid_direction = center([left_eye_angle, right_eye_angle])
+            print(mid_direction)
+            
             screen_x = rescale(vision_direction[0], (0.11, -0.27), (0, screen_w))
-            screen_y = rescale(vision_direction[1], (-0.9, -0.47), (0, screen_h))
+            screen_y = rescale(mid_direction[2], (-0.22, -0.28), (0, screen_h))
             
             stabiler.pop(0)
             stabiler.append((screen_x, screen_y))
