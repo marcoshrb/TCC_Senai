@@ -1,10 +1,9 @@
 import pygame
 import sys
 
-from utils import rescale
-
 COLUMNS = 5
 ROWS    = 3
+GAP     = 20
 
 pygame.init()
 
@@ -29,7 +28,7 @@ def Next():
         running = False
         
 last_update_time = pygame.time.get_ticks()
-update_interval = 5000
+update_interval = 1000
     
 while running:
     for event in pygame.event.get():
@@ -45,9 +44,10 @@ while running:
     if current_time - last_update_time >= update_interval:
         Next()
         last_update_time = current_time
+        
+    center_x = (screen_width - GAP) / (COLUMNS - 1) * x + GAP / 2
+    center_y = (screen_height - GAP) / (ROWS - 1) * y + GAP / 2
     
-    center_x = (screen_width / COLUMNS) * x + (screen_width / COLUMNS) / 2
-    center_y = (screen_height / ROWS) * y + (screen_height / ROWS) / 2
     pygame.draw.circle(screen, (255, 0, 0), (int(center_x), int(center_y)), 10)
             
     pygame.display.flip()
