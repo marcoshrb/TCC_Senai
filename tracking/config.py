@@ -1,7 +1,7 @@
-from .exceptions import IncorrectInstanceException
-
 from typing import Optional
 from .webcam import WebCam
+
+from .exceptions import IncorrectInstanceException
 
 class Config:
     def __init__(self):
