@@ -1,4 +1,40 @@
+from .exceptions import IncorrectInstanceException
+
+from typing import Optional
+from .webcam import WebCam
+
 class Config:
-    SCREEN_WIDTH = 0
-    SCREEN_HEIGHT = 0
-    VIDEO_CAPTURE = None
+    def __init__(self):
+        self.SCREEN_WIDTH = 0
+        self.SCREEN_HEIGHT = 0
+        self.VIDEO_CAPTURE = None
+            
+    @property
+    def SCREEN_WIDTH(self) -> int:
+        return self._screen_width
+    
+    @SCREEN_WIDTH.setter
+    def SCREEN_WIDTH(self, value: int):
+        if not isinstance(value, int):
+            raise IncorrectInstanceException(type(value), int)
+        self._screen_width = value
+        
+    @property
+    def SCREEN_HEIGHT(self) -> int:
+        return self._screen_height
+    
+    @SCREEN_HEIGHT.setter
+    def SCREEN_HEIGHT(self, value: int):
+        if not isinstance(value, int):
+            raise IncorrectInstanceException(type(value), int)
+        self._screen_height = value
+        
+    @property
+    def VIDEO_CAPTURE(self) -> Optional[WebCam]:
+        return self._video_capture
+    
+    @VIDEO_CAPTURE.setter
+    def VIDEO_CAPTURE(self, value: WebCam):
+        if not isinstance(value, WebCam):
+            raise IncorrectInstanceException(type(value), WebCam)
+        self._video_capture = value
