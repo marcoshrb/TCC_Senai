@@ -1,7 +1,6 @@
 from typing import Union, Tuple, List
 import cv2
 
-from .constants import CONFIG
 from .enums import TypeEnum as type
 from .exceptions import InvalidFlagException
 
@@ -12,6 +11,7 @@ def init(
         video_capture: Union[cv2.VideoCapture, int] = 0,
         *flags: Union[int, type]
 ):
+    from .constants import CONFIG
     CONFIG.SCREEN_WIDTH, CONFIG.SCREEN_HEIGHT = screen_size
     CONFIG.VIDEO_CAPTURE = WebCam(video_capture)
     
