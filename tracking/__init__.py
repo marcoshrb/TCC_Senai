@@ -2,6 +2,7 @@ from typing import Union, Tuple, List
 import cv2
 
 from .enums import TypeEnum as type
+from .enums import Side as side
 from .exceptions import InvalidFlagException
 
 from .webcam import WebCam
