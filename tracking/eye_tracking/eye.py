@@ -2,8 +2,7 @@ from typing import List, Tuple
 import cv2
 import numpy as np
 
-from ..utils import normalize_pixel
-
+from ..landmarks import Landmarks
 from ..enums.side import Side
 from ..exceptions import InvalidFlagException, IncorrectInstanceException
 
@@ -16,22 +15,17 @@ class Eye:
             raise InvalidFlagException("expected tracking.side.LEFT or tracking.side.RIGHT")
         self._side = side
         
-    def predict(self, image: np.ndarray, landmarks: list) -> List[float]:
-        height, width = self._get_image_shape(image)
-        points = self._get_points(landmarks, width, height)
+    def predict(self, landmarks: Landmarks) -> List[float]:
+        self._get_image_shape(landmarks._image)
         
-        image, mask, _ = self._cut_eye(image, points)
+        IDXs = Eye.LEFT_EYE_IDX if self._side == Side.LEFT else Eye.RIGHT_EYE_IDX
+        points = landmarks._get_pixels(IDXs)
+        
+        image, mask, _ = self._cut_eye(landmarks._image, points)
         image = self._apply_threshold(image, mask)
         
         indices = np.argwhere(image == 0)
         return np.mean(indices, axis=0)
-        
-    def _get_points(self, landmarks: list, width: int, height: int) -> List[Tuple[int, int]]:
-        IDXs = Eye.LEFT_EYE_IDX if self._side == Side.LEFT else Eye.RIGHT_EYE_IDX
-        return [
-            normalize_pixel(point.x, point.y, width, height)
-            for point 
-            in [landmarks[idx] for idx in IDXs]]
         
     def _get_image_shape(self, image: np.ndarray) -> Tuple[int, int]:
         shape = image.shape

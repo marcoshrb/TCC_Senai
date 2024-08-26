@@ -5,9 +5,9 @@ from .exceptions import IncorrectInstanceException
 
 class Config:
     def __init__(self):
-        self.SCREEN_WIDTH = 0
-        self.SCREEN_HEIGHT = 0
-        self.VIDEO_CAPTURE = None
+        self._screen_width = 0
+        self._screen_height = 0
+        self._video_capture = None
             
     @property
     def SCREEN_WIDTH(self) -> int:
