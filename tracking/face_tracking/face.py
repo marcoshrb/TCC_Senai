@@ -13,8 +13,6 @@ class Face:
     FACE_RIGHT_IDX = 127
     
     def predict(self, landmarks: Landmarks) -> List[float]:
-        self._get_image_shape(landmarks._image)
-        
         IDXs = [Face.FACE_LEFT_IDX, Face.FACE_CENTER_IDX, Face.FACE_RIGHT_IDX]
         left_point, center_point, right_point = landmarks._get_points(IDXs)
         
@@ -22,9 +20,3 @@ class Face:
         direction = math.direction(center_point, mean_point)
         
         return direction
-        
-    def _get_image_shape(self, image: np.ndarray) -> Tuple[int, int]:
-        shape = image.shape
-        if len(shape) != 2:
-            raise IncorrectInstanceException(f"(shape: {shape})", "(shape: (h, w))", "Try convert to grayscale")
-        return shape

@@ -15,8 +15,8 @@ class WebCam:
         sucess, frame = self._video_capture.read()
         if sucess:
             self.frame = frame
-            return frame
-        return self._frame
+            return sucess, frame
+        return sucess, self._frame
     
     @property
     def width(self) -> Union[int, float]:
@@ -36,6 +36,10 @@ class WebCam:
             raise IncorrectInstanceException(type(value), np.ndarray)
         self._height, self._width = value.shape[:2]
         self._frame = value
+        
+    @property
+    def isOpened(self) -> bool:
+        return self._video_capture.isOpened()
     
     def close(self):
         self._video_capture.release()

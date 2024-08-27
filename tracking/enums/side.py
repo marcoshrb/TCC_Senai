@@ -1,5 +1,5 @@
 from enum import Enum
 
-class Side(Enum):
+class SideEnum(Enum):
     LEFT    = 0
     RIGHT   = 1
