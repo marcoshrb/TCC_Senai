@@ -14,7 +14,7 @@ class WebCam:
     def read(self) -> Tuple[bool, np.ndarray]:
         sucess, frame = self._video_capture.read()
         if sucess:
-            self.frame = frame
+            self._frame = frame
             return sucess, frame
         return sucess, self._frame
     
