@@ -46,13 +46,16 @@ class Eye:
         image = image[minimum[1]:maximum[1], minimum[0]:maximum[0]]
         mask = np.zeros_like(image, dtype=np.uint8)
         
-        points = [(x - minimum[0], y - minimum[0]) for x, y in points]
+        points = [(x - minimum[0], y - minimum[1]) for x, y in points]
         points = np.array(points, dtype=np.int32).reshape((-1, 1, 2))
         cv2.fillPoly(mask, [points], 255)
         
         return image, mask, (minimum, maximum)
     
     def _apply_threshold(self, image: np.ndarray, mask: np.ndarray) -> np.ndarray:
+        image = cv2.resize(image, (300, 100), interpolation=cv2.INTER_LINEAR)
+        mask = cv2.resize(mask, (300, 100), interpolation=cv2.INTER_LINEAR)
+        
         image = cv2.bitwise_and(image, image, mask=mask)
         image = cv2.adaptiveThreshold(
             image, 
