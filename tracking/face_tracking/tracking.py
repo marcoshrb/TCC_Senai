@@ -4,7 +4,7 @@ import numpy as np
 from tracking.constants import CONFIG, MP_FACE_MESH
 from tracking.landmarks import Landmarks
 
-from .face import Face
+from .face_detector import FaceDetector
 
 class Tracking:
     def __init__(
@@ -18,9 +18,9 @@ class Tracking:
             refine_landmarks = refine_landmarks,
             min_detection_confidence = min_detection_confidence,
             min_tracking_confidence = min_tracking_confidence)
-        self.face = Face()
+        self.face = FaceDetector()
         
-    def predict(self, image: Union[np.ndarray, None] = None) -> List[List[float]]:
+    def predict(self, image: Union[np.ndarray, None] = None) -> List[tuple]:
         landmarks = self.process(image)
         directions = [self.face.predict(landmark) for landmark in landmarks]
         

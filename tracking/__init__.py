@@ -7,6 +7,7 @@ from .exceptions import InvalidFlagException
 
 from .webcam import WebCam
 
+EyeTracking = None
 FaceTracking = None
 
 def init(
@@ -22,7 +23,10 @@ def init(
         value = flag.value if isinstance(flag, type) else flag
         
         if value == 0:
-            pass
+            from .eye_tracking import Tracking
+            
+            global EyeTracking
+            EyeTracking = Tracking
         elif value == 1:
             from .face_tracking import Tracking
             
