@@ -1,2 +1,2 @@
 from .tracking import Tracking
-from .face import Face
+from .face_detector import FaceDetector

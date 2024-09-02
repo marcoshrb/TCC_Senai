@@ -6,7 +6,7 @@ from ..landmarks import Landmarks
 from ..enums.side import SideEnum as Side
 from ..exceptions import InvalidFlagException, IncorrectInstanceException
 
-class Eye:
+class EyeDetector:
     LEFT_EYE_IDX = [362, 385, 387, 263, 373, 380]
     RIGHT_EYE_IDX = [33, 160, 158, 133, 153, 144]
     
@@ -18,7 +18,7 @@ class Eye:
     def predict(self, landmarks: Landmarks) -> Tuple[List[float], Tuple[tuple, tuple]]:
         self._get_image_shape(landmarks._image)
         
-        IDXs = Eye.LEFT_EYE_IDX if self._side == Side.LEFT else Eye.RIGHT_EYE_IDX
+        IDXs = EyeDetector.LEFT_EYE_IDX if self._side == Side.LEFT else EyeDetector.RIGHT_EYE_IDX
         points = landmarks._get_pixels(IDXs)
         
         image, mask, rect = self._cut_eye(landmarks._image, points)
