@@ -7,6 +7,8 @@ from .exceptions import InvalidFlagException
 
 from .webcam import WebCam
 
+FaceTracking = None
+
 def init(
         screen_size: Union[Tuple[int, int], List[int]],
         video_capture: Union[cv2.VideoCapture, int] = 0,
@@ -18,12 +20,14 @@ def init(
     
     for flag in [flags] if isinstance(flags, (int, type)) else set(flags):
         value = flag.value if isinstance(flag, type) else flag
-        print(value)
         
         if value == 0:
             pass
         elif value == 1:
-            pass
+            from .face_tracking import Tracking
+            
+            global FaceTracking
+            FaceTracking = Tracking
         elif value == 2:
             pass
         else:
