@@ -1,5 +1,9 @@
 from typing import List, Tuple, Union
+import cv2
 import numpy as np
+
+from tracking.constants import CONFIG
+from tracking.landmarks import Landmarks
 
 from .eye_detector import EyeDetector
 from .eye import Eye
@@ -25,16 +29,17 @@ class Tracking:
         
     def predict(self, image: Union[np.ndarray, None] = None) -> List[Tuple[Eye, Eye]]:
         landmarks = self.face_tracking.process(image)
+        landmarks = [Landmarks(cv2.cvtColor(landmark._image, cv2.COLOR_BGR2GRAY), landmark._landmarks) for landmark in landmarks]
         
         results = [(
                 self.left_eye.predict(landmark), 
                 self.right_eye.predict(landmark))
             for landmark 
             in landmarks]
-        
+            
         eyes = [(
-            Eye(Side.LEFT, **result[0]),
-            Eye(Side.RIGHT, **result[1])
+            Eye(Side.LEFT, *result[0]),
+            Eye(Side.RIGHT, *result[1])
         ) 
             for result 
             in results]

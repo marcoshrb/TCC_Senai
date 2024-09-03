@@ -23,15 +23,15 @@ def init(
         value = flag.value if isinstance(flag, type) else flag
         
         if value == 0:
-            from .eye_tracking import Tracking
+            from .eye_tracking import Tracking as EyeTrackingClass
             
             global EyeTracking
-            EyeTracking = Tracking
+            EyeTracking = EyeTrackingClass
         elif value == 1:
-            from .face_tracking import Tracking
+            from .face_tracking import Tracking as FaceTrackingClass
             
             global FaceTracking
-            FaceTracking = Tracking
+            FaceTracking = FaceTrackingClass
         elif value == 2:
             pass
         else:
