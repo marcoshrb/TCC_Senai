@@ -28,7 +28,7 @@ class WebCam:
     
     @property
     def frame(self) -> np.ndarray:
-        return self._frame()
+        return self._frame
     
     @frame.setter
     def frame(self, value: np.ndarray):

@@ -9,6 +9,7 @@ from .webcam import WebCam
 
 EyeTracking = None
 FaceTracking = None
+HandTracking = None
 
 def init(
         screen_size: Union[Tuple[int, int], List[int]],
@@ -33,6 +34,9 @@ def init(
             global FaceTracking
             FaceTracking = FaceTrackingClass
         elif value == 2:
-            pass
+            from .hand_tracking import Tracking as HandTrackingClass
+            
+            global HandTracking
+            HandTracking = HandTrackingClass
         else:
             raise InvalidFlagException(f"Invalid Flag {flag}, use a tracking.type value")

@@ -29,8 +29,12 @@ with mp_hands.Hands() as hands:
                 Landmarks(frame, marks.landmark))
                      for hand, marks
                      in zip(results.multi_handedness, results.multi_hand_landmarks)]
+            print(list(zip(results.multi_handedness, results.multi_hand_landmarks)))
             
-            print(mp_hands.HAND_CONNECTIONS)
+            for hand in hands_objs:
+                for connection in mp_hands.HAND_CONNECTIONS:
+                    start, end = hand.landmarks._get_pixels(connection)
+                    frame = cv2.line(frame, start, end, (255, 0, 0), 3)
         
         cv2.imshow('Camera', frame)
         
