@@ -3,6 +3,7 @@ import cv2
 
 from .enums import TypeEnum as type
 from .enums import SideEnum as side
+from .enums import FingerEnum as finger
 from .exceptions import InvalidFlagException
 
 from .webcam import WebCam
