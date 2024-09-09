@@ -37,7 +37,8 @@ class Calibration:
         if shape != len(self._matrix.shape):
             return value
         if value[1] is None:
-            value[1] = np.mean(value[0], axis=1)
+            value = (value[0], np.mean(value[0], axis=1))
+            self._matrix[index] = value
         return value[1]
     
     def __setitem__(self, index, value):
@@ -49,3 +50,4 @@ class Calibration:
             raise IncorrectInstanceException(f'index=tuple[{shape}]', f'index=tuple[{len(self._matrix.shape)}]', 'Incorrect index dimesions')
         for i in range(shape):
             self._matrix[index][0][i].append(value[i])
+            self._matrix[index] = (self._matrix[index][0], None)
