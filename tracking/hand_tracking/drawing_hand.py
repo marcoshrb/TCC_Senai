@@ -22,20 +22,18 @@ class DrawMethods:
                  finger.PINKY]):
         hand_connections = set()
         if palm:
-            hand_connections = hand_connections.union(*self.HAND_PALM_CONNECTIONS if not connections else self.HAND_PALM_CONNECTIONS)
-        fingers_connections = []
+            hand_connections = hand_connections.union(self.HAND_PALM_CONNECTIONS) if connections else hand_connections.union(*self.HAND_PALM_CONNECTIONS)
         for f in fingers:
             if f == finger.THUMB:
-                fingers_connections.append(*self.HAND_PALM_CONNECTIONS if not connections else self.HAND_PALM_CONNECTIONS)
+                hand_connections = hand_connections.union(self.HAND_THUMB_CONNECTIONS) if connections else hand_connections.union(*self.HAND_THUMB_CONNECTIONS)
             if f == finger.INDEX:
-                fingers_connections.append(*self.HAND_INDEX_FINGER_CONNECTIONS if not connections else self.HAND_INDEX_FINGER_CONNECTIONS)
+                hand_connections = hand_connections.union(self.HAND_INDEX_FINGER_CONNECTIONS) if connections else hand_connections.union(*self.HAND_INDEX_FINGER_CONNECTIONS)
             if f == finger.MIDDLE:
-                fingers_connections.append(*self.HAND_MIDDLE_FINGER_CONNECTIONS if not connections else self.HAND_MIDDLE_FINGER_CONNECTIONS)
+                hand_connections = hand_connections.union(self.HAND_MIDDLE_FINGER_CONNECTIONS) if connections else hand_connections.union(*self.HAND_MIDDLE_FINGER_CONNECTIONS)
             if f == finger.RING:
-                fingers_connections.append(*self.HAND_RING_FINGER_CONNECTIONS if not connections else self.HAND_RING_FINGER_CONNECTIONS)
+                hand_connections = hand_connections.union(self.HAND_RING_FINGER_CONNECTIONS) if connections else hand_connections.union(*self.HAND_RING_FINGER_CONNECTIONS)
             if f == finger.PINKY:
-                fingers_connections.append(*self.HAND_PINKY_FINGER_CONNECTIONS if not connections else self.HAND_PINKY_FINGER_CONNECTIONS)
-        hand_connections = hand_connections.union(fingers_connections)
+                hand_connections = hand_connections.union(self.HAND_PINKY_FINGER_CONNECTIONS) if connections else hand_connections.union(*self.HAND_PINKY_FINGER_CONNECTIONS)
         
         for connection in hand_connections:
             height, width = self.landmarks._image.shape[:2]
