@@ -1,3 +1,4 @@
+import json
 from typing import Union
 import numpy as np
 
@@ -30,6 +31,25 @@ class Calibration:
             
         instance = cls(matrix.shape)
         instance._matrix = matrix.copy()
+        return instance
+    
+    @classmethod
+    def from_file(cls, file:str) -> 'Calibration':
+        with open(file, 'r') as file:
+            data = json.load(file)
+            shape = tuple(data['shape'])
+            dim = len(shape)
+            values = np.array(data['values'])
+
+        instance = cls(shape)
+        it = np.nditer(instance._matrix, flags=['multi_index', 'refs_ok'])
+        for _ in it:
+            index = it.multi_index
+            value = values[index]
+            if not isinstance(value, np.ndarray) or len(value) != dim:
+                raise Exception('Values ​​in the file are incompatible with the model shape')
+            mean = np.mean(value, axis=1)
+            instance[index] = (value, mean)
         return instance
     
     def __getitem__(self, index):
