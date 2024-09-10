@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Tuple, Union
 import numpy as np
 
 from tracking.constants import CONFIG, MP_FACE_MESH
@@ -20,11 +20,11 @@ class Tracking:
             min_tracking_confidence = min_tracking_confidence)
         self.face = FaceDetector()
         
-    def predict(self, image: Union[np.ndarray, None] = None) -> List[tuple]:
+    def predict(self, image: Union[np.ndarray, None] = None) -> Tuple[List[tuple], List[Landmarks]]:
         landmarks = self.process(image)
         directions = [self.face.predict(landmark) for landmark in landmarks]
         
-        return directions
+        return directions, landmarks
         
     def process(self, image: Union[np.ndarray, None] = None) -> List[Landmarks]:
         if image is None:
