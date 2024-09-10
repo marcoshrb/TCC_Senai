@@ -14,3 +14,12 @@ class Math:
         if length == 0:
             return [0] * len(dir)
         return tuple([dir / length for dir in dir])
+    
+    @staticmethod
+    def euclidean_distance(a:tuple, b:tuple) -> float:
+        distance = np.sum([(a[i] - b[i]) ** 2 for i in range(len(a))])
+        return math.sqrt(distance)
+    
+for func_name in dir(math):
+    if not func_name.startswith('_'):
+        setattr(Math, func_name, getattr(math, func_name))
