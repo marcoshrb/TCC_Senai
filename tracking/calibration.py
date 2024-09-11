@@ -39,16 +39,16 @@ class Calibration:
             data = json.load(file)
             shape = tuple(data['shape'])
             dim = len(shape)
-            values = np.array(data['values'])
+            values = np.array(data['values'], dtype=object)
 
         instance = cls(shape)
         it = np.nditer(instance._matrix, flags=['multi_index', 'refs_ok'])
         for _ in it:
             index = it.multi_index
-            value = values[index]
-            if not isinstance(value, np.ndarray) or len(value) != dim:
+            value = values[index].tolist() if isinstance(values[index], np.ndarray) else values[index]
+            if not isinstance(value, list) or len(value) != dim:
                 raise Exception('Values ​​in the file are incompatible with the model shape')
-            mean = np.mean(value, axis=1)
+            mean = np.array([np.mean(val) for val in value])
             instance[index] = (value, mean)
         return instance
     
@@ -120,3 +120,16 @@ class Calibration:
         result = (gap + (size * value) for value, size, gap in zip(norms, square, gap))
 
         return tuple(result)
+    
+    def to_json(self):
+        shape = self._matrix.shape
+        values = np.ndarray(shape, dtype=object)
+        it = np.nditer(values, flags=['multi_index', 'refs_ok'])
+        for _ in it:
+            index = it.multi_index
+            values[index] = self._matrix[index][0]
+        return {"shape": list(shape), "values": values.tolist()}
+
+    def save(self, file:str):
+        with open(file, 'w') as file:
+            json.dump(self.to_json(), file, indent=4)

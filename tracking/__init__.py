@@ -6,6 +6,7 @@ from .enums import SideEnum as side
 from .enums import FingerEnum as finger
 from .exceptions import InvalidFlagException
 
+from .constants import CONFIG
 from .webcam import WebCam
 
 EyeTracking = None
@@ -17,7 +18,6 @@ def init(
         video_capture: Union[cv2.VideoCapture, int] = 0,
         flags: List[Union[int, type]] = 0
 ):
-    from .constants import CONFIG
     CONFIG.SCREEN_WIDTH, CONFIG.SCREEN_HEIGHT = screen_size
     CONFIG.VIDEO_CAPTURE = WebCam(video_capture)
     
