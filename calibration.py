@@ -1,16 +1,38 @@
+import numpy as np
 import pygame
 import sys
+import ctypes
+import win32api
+import win32con
+import win32gui
+
+import tracking as tck
 
 COLUMNS = 5
 ROWS    = 3
 GAP     = 20
 
 pygame.init()
+tck.init((1920, 1080), flags=tck.type.FACE_TRACKING)
+
+face_tck = tck.FaceTracking()
+calibration = tck.Calibration((COLUMNS, ROWS))
 
 screen_info = pygame.display.Info()
 screen_width, screen_height = screen_info.current_w, screen_info.current_h
 
-screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
+screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN, display=1)
+
+def move_window_to_monitor(monitor_number):
+    hwnd = pygame.display.get_wm_info()["window"]
+    monitors = win32api.EnumDisplayMonitors()
+    if monitor_number < len(monitors):
+        monitor_info = monitors[monitor_number]
+        monitor_rect = monitor_info[2]
+        x, y = monitor_rect[0], monitor_rect[1]
+        win32gui.SetWindowPos(hwnd, win32con.HWND_TOP, x, y, screen_width, screen_height, win32con.SWP_NOACTIVATE | win32con.SWP_NOSIZE)
+
+move_window_to_monitor(0)
 
 x = 0
 y = 0
@@ -28,7 +50,8 @@ def Next():
         running = False
         
 last_update_time = pygame.time.get_ticks()
-update_interval = 1000
+waiting_interval = 1000
+update_interval = 2000
     
 while running:
     for event in pygame.event.get():
@@ -41,7 +64,12 @@ while running:
     screen.fill((0, 0, 0))
     
     current_time = pygame.time.get_ticks()
-    if current_time - last_update_time >= update_interval:
+    if current_time - last_update_time >= waiting_interval:
+        result, _ = face_tck.predict()
+        if result:
+            calibration.append((x, y), result[0])
+
+    if current_time - last_update_time >= update_interval + waiting_interval:
         Next()
         last_update_time = current_time
         
@@ -53,3 +81,4 @@ while running:
     pygame.display.flip()
     
 pygame.quit()
+calibration.save('face_model.json')

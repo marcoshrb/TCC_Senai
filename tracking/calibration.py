@@ -65,7 +65,7 @@ class Calibration:
     def __setitem__(self, index, value):
         self._matrix[index] = value
                 
-    def append(self, index, value):
+    def append(self, index: tuple, value: tuple):
         shape = len(index)
         if shape != len(self._matrix.shape):
             raise IncorrectInstanceException(f'index=tuple[{shape}]', f'index=tuple[{len(self._matrix.shape)}]', 'Incorrect index dimesions')

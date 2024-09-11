@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple
 from .webcam import WebCam
 
 from .exceptions import IncorrectInstanceException
@@ -8,6 +8,10 @@ class Config:
         self._screen_width = 0
         self._screen_height = 0
         self._video_capture = None
+
+    @property
+    def SCREEN_SHAPE(self) -> Tuple[int, int]:
+        return (self._screen_width, self._screen_height)
             
     @property
     def SCREEN_WIDTH(self) -> int:

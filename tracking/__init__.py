@@ -5,7 +5,7 @@ from .enums import TypeEnum as type
 from .enums import SideEnum as side
 from .enums import FingerEnum as finger
 from .exceptions import InvalidFlagException
-
+from .calibration import Calibration
 from .constants import CONFIG
 from .webcam import WebCam
 
