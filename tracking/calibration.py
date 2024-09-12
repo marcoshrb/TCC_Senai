@@ -86,7 +86,7 @@ class Calibration:
             start = it.multi_index
             end = tuple(i + 1 for i in start)
 
-            if 0 in set((shape - end for shape, end in zip(shape, end))):
+            if 0 in (shape - end for shape, end in zip(shape, end)):
                 continue
 
             start_values = self[start]
@@ -96,9 +96,6 @@ class Calibration:
                 (x - min) / (max - min) 
                 for min, max, x 
                 in zip(start_values, end_values, values)]
-            
-            if all(0 <= x <= 1 for x in norms):
-                return tuple(min + norm for min, norm in zip(start, norms))
             
             distance = math.euclidean_distance(norms, ref)
             if distance < minimum_distance:
@@ -111,11 +108,11 @@ class Calibration:
     def predict(self, values, dimension:tuple, gap:Union[int, tuple] = 0) -> tuple:
         shape = self._matrix.shape
         dim = len(shape)
-
+        
         if not isinstance(gap, tuple):
             gap = [gap] * dim
 
-        square = [(dim - gap * 2) / shape for shape, dim, gap in zip(shape, dimension, gap)]
+        square = [(dim - gap * 2) / (shape - 1) for shape, dim, gap in zip(shape, dimension, gap)]
         norms = self.normalize(values)
         result = (gap + (size * value) for value, size, gap in zip(norms, square, gap))
 
