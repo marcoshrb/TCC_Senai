@@ -13,6 +13,13 @@ class Hand(DrawMethods):
     HAND_RING_FINGER_CONNECTIONS = mp.solutions.hands_connections.HAND_RING_FINGER_CONNECTIONS
     HAND_PINKY_FINGER_CONNECTIONS = mp.solutions.hands_connections.HAND_PINKY_FINGER_CONNECTIONS
     
+    HAND_PALM = set().union(*HAND_PALM_CONNECTIONS)
+    HAND_THUMB = set().union(*HAND_THUMB_CONNECTIONS)
+    HAND_INDEX = set().union(*HAND_INDEX_FINGER_CONNECTIONS)
+    HAND_MIDDLE = set().union(*HAND_MIDDLE_FINGER_CONNECTIONS)
+    HAND_RING = set().union(*HAND_RING_FINGER_CONNECTIONS)
+    HAND_PINKY = set().union(*HAND_PINKY_FINGER_CONNECTIONS)
+    
     def __init__(self, side: Side, landmarks: Landmarks):
         self.side = side
         self.landmarks = landmarks
