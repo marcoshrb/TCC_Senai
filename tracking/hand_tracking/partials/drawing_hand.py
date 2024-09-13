@@ -3,8 +3,8 @@ from typing import List, Tuple, Union
 import cv2
 import numpy as np
 
-from .. import finger
-from ..utils.drawing import normalize_pixel
+from ... import finger
+from ...utils.drawing import normalize_pixel
 
 class DrawMethods:
     def draw(self,
