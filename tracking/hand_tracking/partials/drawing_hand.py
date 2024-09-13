@@ -24,16 +24,7 @@ class DrawMethods:
         if palm:
             hand_connections = hand_connections.union(self.HAND_PALM_CONNECTIONS if connections else self.HAND_PALM)
         for f in fingers:
-            if f == finger.THUMB:
-                hand_connections = hand_connections.union(self.HAND_THUMB_CONNECTIONS if connections else self.HAND_THUMB)
-            if f == finger.INDEX:
-                hand_connections = hand_connections.union(self.HAND_INDEX_FINGER_CONNECTIONS if connections else self.HAND_INDEX)
-            if f == finger.MIDDLE:
-                hand_connections = hand_connections.union(self.HAND_MIDDLE_FINGER_CONNECTIONS if connections else self.HAND_MIDDLE)
-            if f == finger.RING:
-                hand_connections = hand_connections.union(self.HAND_RING_FINGER_CONNECTIONS if connections else self.HAND_RING)
-            if f == finger.PINKY:
-                hand_connections = hand_connections.union(self.HAND_PINKY_FINGER_CONNECTIONS if connections else self.HAND_PINKY)
+            hand_connections = hand_connections.union(finger.get_connections(f) if connections else finger.get_points(f))
         
         for connection in hand_connections:
             height, width = self.landmarks._image.shape[:2]
@@ -55,4 +46,37 @@ class DrawMethods:
                 radius = int((1 - norm) * (point_scale[1] - point_scale[0]))
                 image = cv2.circle(image, pt, radius, color, -1)
                 
+        return image
+    
+    def draw_fingertips(self,
+                   image: np.ndarray,
+                   color: Tuple[int, int, int],
+                   point_scale:Tuple[int, int] = (10, 75),
+                   fingers: List[Union[int, finger]] = [
+                       finger.THUMB,
+                       finger.INDEX,
+                       finger.MIDDLE,
+                       finger.RING,
+                       finger.PINKY]):
+        fingerstips = []
+        for f in fingers:
+            if f == finger.THUMB:
+                fingerstips.append(max(self.HAND_THUMB))
+            if f == finger.INDEX:
+                fingerstips.append(max(self.HAND_INDEX))
+            if f == finger.MIDDLE:
+                fingerstips.append(max(self.HAND_MIDDLE))
+            if f == finger.RING:
+                fingerstips.append(max(self.HAND_RING))
+            if f == finger.PINKY:
+                fingerstips.append(max(self.HAND_PINKY))
+
+        height, width = self.landmarks._image.shape[:2]
+        points = self.landmarks._get_points(fingerstips)
+        for point in points:
+            pt = normalize_pixel(point[0], point[1], width, height)
+            norm = min(max(point[2] + 1, 0), 1)
+            radius = int((1 - norm) * (point_scale[1] - point_scale[0]))
+            image = cv2.circle(image, pt, radius, color, -1)
+
         return image
