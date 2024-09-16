@@ -6,6 +6,11 @@ class FingerEnum(Enum):
     MIDDLE  = 2
     RING    = 3
     PINKY   = 4
+    
+    @classmethod
+    def get_tip(cls, finger:'FingerEnum'):
+        points = sorted(cls.get_points(finger))
+        return points[-1]
 
     @classmethod
     def get_points(cls, finger:'FingerEnum'):
