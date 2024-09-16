@@ -1,9 +1,11 @@
 import numpy as np
 
-from ... import finger as FingerEnum
+from ..abstract import HandAbstract
+
+from ... import FingerEnum
 from ...utils import math
 
-class InfosHand:
+class InfosMethods(HandAbstract):
     def finger_is_raised(self, finger: FingerEnum, threshold: float = .7) -> bool:
         center_palm = self.landmarks._get_points(self.HAND_PALM)
         center_palm = np.mean(center_palm, axis=0)

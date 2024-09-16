@@ -3,10 +3,12 @@ from typing import List, Tuple, Union
 import cv2
 import numpy as np
 
-from ... import finger
+from ..abstract import HandAbstract
+
+from ... import FingerEnum
 from ...utils.drawing import normalize_pixel
 
-class DrawMethods:
+class DrawMethods(HandAbstract):
     def draw(self,
              image: np.ndarray,
              color: Tuple[int, int, int],
@@ -14,17 +16,17 @@ class DrawMethods:
              connections: bool = True,
              thickness: int = 2,
              palm: bool = True,
-             fingers: List[Union[int, finger]] = [
-                 finger.THUMB,
-                 finger.INDEX,
-                 finger.MIDDLE,
-                 finger.RING,
-                 finger.PINKY]):
+             fingers: List[Union[int, FingerEnum]] = [
+                 FingerEnum.THUMB,
+                 FingerEnum.INDEX,
+                 FingerEnum.MIDDLE,
+                 FingerEnum.RING,
+                 FingerEnum.PINKY]):
         hand_connections = set()
         if palm:
             hand_connections = hand_connections.union(self.HAND_PALM_CONNECTIONS if connections else self.HAND_PALM)
         for f in fingers:
-            hand_connections = hand_connections.union(finger.get_connections(f) if connections else finger.get_points(f))
+            hand_connections = hand_connections.union(FingerEnum.get_connections(f) if connections else FingerEnum.get_points(f))
         
         for connection in hand_connections:
             height, width = self.landmarks._image.shape[:2]
@@ -52,23 +54,23 @@ class DrawMethods:
                    image: np.ndarray,
                    color: Tuple[int, int, int],
                    point_scale:Tuple[int, int] = (10, 75),
-                   fingers: List[Union[int, finger]] = [
-                       finger.THUMB,
-                       finger.INDEX,
-                       finger.MIDDLE,
-                       finger.RING,
-                       finger.PINKY]):
+                   fingers: List[Union[int, FingerEnum]] = [
+                       FingerEnum.THUMB,
+                       FingerEnum.INDEX,
+                       FingerEnum.MIDDLE,
+                       FingerEnum.RING,
+                       FingerEnum.PINKY]):
         fingerstips = []
         for f in fingers:
-            if f == finger.THUMB:
+            if f == FingerEnum.THUMB:
                 fingerstips.append(max(self.HAND_THUMB))
-            if f == finger.INDEX:
+            if f == FingerEnum.INDEX:
                 fingerstips.append(max(self.HAND_INDEX))
-            if f == finger.MIDDLE:
+            if f == FingerEnum.MIDDLE:
                 fingerstips.append(max(self.HAND_MIDDLE))
-            if f == finger.RING:
+            if f == FingerEnum.RING:
                 fingerstips.append(max(self.HAND_RING))
-            if f == finger.PINKY:
+            if f == FingerEnum.PINKY:
                 fingerstips.append(max(self.HAND_PINKY))
 
         height, width = self.landmarks._image.shape[:2]

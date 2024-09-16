@@ -3,7 +3,7 @@ import cv2
 
 from .enums import TypeEnum as type
 from .enums import SideEnum as side
-from .enums import FingerEnum as finger
+from .enums import FingerEnum as FingerEnum
 from .exceptions import InvalidFlagException
 from .calibration import Calibration
 from .constants import CONFIG

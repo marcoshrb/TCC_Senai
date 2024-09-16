@@ -1,20 +1,13 @@
-from . import constants
-
-from .partials.drawing_hand import DrawMethods
-from .partials.infos_hand import InfosHand
-from .partials.measures_hand import MeasuresMethods
+from . import partials
 
 from ..enums.side import SideEnum as Side
 from ..landmarks import Landmarks
 
-class Hand(DrawMethods, InfosHand, MeasuresMethods):    
+class Hand(*[
+        getattr(partials, name) 
+        for name in dir(partials) 
+        if name.endswith('Methods')]):  
+      
     def __init__(self, side: Side, landmarks: Landmarks):
-        self.side = side
-        self.landmarks = landmarks
-
-# Implements the contants in the Hand class
-for name, value in [(name, getattr(constants, name)) 
-                    for name in dir(constants) 
-                    if not name.startswith('_')]:
-    if not callable(value) and not isinstance(value, type(constants)):
-        setattr(Hand, name, value)
+        self._side = side
+        self._landmarks = landmarks
