@@ -8,12 +8,12 @@ class FingerEnum(Enum):
     PINKY   = 4
     
     @classmethod
-    def get_tip(cls, finger:'FingerEnum'):
+    def get_tip(cls, finger:'FingerEnum') -> int:
         points = sorted(cls.get_points(finger))
         return points[-1]
 
     @classmethod
-    def get_points(cls, finger:'FingerEnum'):
+    def get_points(cls, finger:'FingerEnum') -> set:
         from ..hand_tracking import constants
         if finger == cls.THUMB:
             return constants.HAND_THUMB
@@ -29,7 +29,7 @@ class FingerEnum(Enum):
             raise ValueError("Invalid finger")
         
     @classmethod
-    def get_connections(cls, finger:'FingerEnum'):
+    def get_connections(cls, finger:'FingerEnum') -> tuple:
         from ..hand_tracking import constants
         if finger == cls.THUMB:
             return constants.HAND_THUMB_CONNECTIONS

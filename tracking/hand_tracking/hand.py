@@ -1,11 +1,13 @@
 from . import constants
+
 from .partials.drawing_hand import DrawMethods
 from .partials.infos_hand import InfosHand
+from .partials.measures_hand import MeasuresMethods
 
 from ..enums.side import SideEnum as Side
 from ..landmarks import Landmarks
 
-class Hand(DrawMethods, InfosHand):    
+class Hand(DrawMethods, InfosHand, MeasuresMethods):    
     def __init__(self, side: Side, landmarks: Landmarks):
         self.side = side
         self.landmarks = landmarks
