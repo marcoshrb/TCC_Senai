@@ -2,7 +2,7 @@ import numpy as np
 
 from ..abstract import HandAbstract
 
-from ... import FingerEnum
+from ... import finger as FingerEnum
 from ...utils import math
 
 class InfosMethods(HandAbstract):

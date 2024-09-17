@@ -1,6 +1,6 @@
 from ..abstract import HandAbstract
 
-from ... import FingerEnum
+from ... import finger as FingerEnum
 from ...utils import math
 
 class MeasuresMethods(HandAbstract):

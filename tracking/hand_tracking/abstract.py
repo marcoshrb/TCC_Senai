@@ -8,7 +8,7 @@ from . import constants
 from ..enums.side import SideEnum as Side
 from ..landmarks import Landmarks
 
-from .. import FingerEnum as FingerEnum
+from .. import finger as FingerEnum
 
 class HandAbstract(ABC):
     @property

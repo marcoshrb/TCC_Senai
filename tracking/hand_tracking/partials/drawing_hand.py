@@ -5,7 +5,7 @@ import numpy as np
 
 from ..abstract import HandAbstract
 
-from ... import FingerEnum
+from ... import finger as FingerEnum
 from ...utils.drawing import normalize_pixel
 
 class DrawMethods(HandAbstract):
@@ -78,7 +78,7 @@ class DrawMethods(HandAbstract):
         for point in points:
             pt = normalize_pixel(point[0], point[1], width, height)
             norm = min(max(point[2] + 1, 0), 1)
-            radius = int((1 - norm) * (point_scale[1] - point_scale[0]))
+            radius = int(point_scale[0] + ((1 - norm) * (point_scale[1] - point_scale[0])))
             image = cv2.circle(image, pt, radius, color, -1)
 
         return image
