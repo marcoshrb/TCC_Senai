@@ -1,3 +1,5 @@
+import numpy as np
+
 from ..abstract import HandAbstract
 
 from ... import finger as FingerEnum
@@ -12,3 +14,8 @@ class MeasuresMethods(HandAbstract):
             math.euclidean_distance(points[i], points[i + 1])
             for i in range(len(points) - 1)]
         return sum(sizes)
+    
+    def center_palm(self):
+        indexes = self.HAND_PALM
+        points = self.landmarks._get_points(indexes)
+        return np.mean(points, axis=0)

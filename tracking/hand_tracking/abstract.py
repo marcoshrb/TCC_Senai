@@ -22,6 +22,10 @@ class HandAbstract(ABC):
     @abstractmethod
     def finger_size(self, finger: FingerEnum) -> float:
         pass
+    
+    @abstractmethod
+    def center_palm(self) -> np.ndarray:
+        pass
 
     @abstractmethod
     def finger_is_raised(self, finger: FingerEnum, threshold: float = .7) -> bool:
